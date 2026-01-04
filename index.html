@@ -270,6 +270,69 @@
         .flower-petal:nth-child(6) { transform: translate(-50%, -100%) rotate(225deg); }
         .flower-petal:nth-child(7) { transform: translate(-50%, -100%) rotate(270deg); }
         .flower-petal:nth-child(8) { transform: translate(-50%, -100%) rotate(315deg); }
+
+        /* Performance */
+        .falling-petal {
+            will-change: transform, opacity;
+        }
+
+        /* Responsividade Mobile */
+        @media (max-width: 768px) {
+            .question {
+                font-size: 22px;
+                margin-bottom: 30px;
+                padding: 0 20px;
+            }
+            
+            .yeah-btn {
+                padding: 12px 50px;
+                font-size: 18px;
+            }
+            
+            .loading-flower {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .flower-center {
+                width: 16px;
+                height: 16px;
+            }
+            
+            .flower-petal {
+                width: 20px;
+                height: 28px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .question {
+                font-size: 18px;
+                margin-bottom: 25px;
+                padding: 0 15px;
+            }
+            
+            .yeah-btn {
+                padding: 10px 40px;
+                font-size: 16px;
+                letter-spacing: 2px;
+            }
+            
+            .loading-flower {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .flower-center {
+                width: 12px;
+                height: 12px;
+            }
+            
+            .flower-petal {
+                width: 15px;
+                height: 22px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -295,12 +358,12 @@
             <div class="flower-petal"></div>
             <div class="flower-petal"></div>
             <div class="flower-center"></div>
-        </div>
-    </div>
+                </div>
+            </div>
 
     <div class="iframe-container" id="iframeContainer">
         <iframe id="mainFrame" src="" allow="autoplay"></iframe>
-    </div>
+            </div>
 
     <script>
         // ===== PETAL SYSTEM =====
@@ -308,8 +371,10 @@
             constructor() {
                 this.container = document.querySelector('.falling-petals-container');
                 this.activePetals = [];
-                this.maxPetals = 15;
-                this.spawnRate = 3000;
+                // Menos pétalas em mobile para performance
+                const isMobile = window.innerWidth <= 768;
+                this.maxPetals = isMobile ? 8 : 15;
+                this.spawnRate = isMobile ? 4000 : 3000;
                 this.running = true;
                 this.init();
             }
