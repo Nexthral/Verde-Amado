@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>For Karina</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --dark-red: #8B0000;
+            --dark-red-light: #A52A2A;
+            --dark-red-dark: #5C0000;
+        }
+
+        body {
+            width: 100vw;
+            height: 100vh;
+            background: #000000;
+            overflow: hidden;
+            position: relative;
+            font-family: 'Georgia', 'Times New Roman', serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        .home-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            text-align: center;
+            padding: 20px;
+            transition: opacity 0.5s ease;
+        }
+
+        .home-content.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .question {
+            color: #ffffff;
+            font-size: 28px;
+            font-weight: 300;
+            letter-spacing: 1px;
+            margin-bottom: 40px;
+            opacity: 0;
+            animation: fadeIn 2s ease-out 0.5s forwards;
+            text-shadow: 0 0 20px rgba(139, 0, 0, 0.3);
+        }
+
+        .question .name {
+            color: var(--dark-red);
+            font-style: italic;
+            font-weight: 400;
+        }
+
+        .yeah-btn {
+            background: transparent;
+            border: 2px solid var(--dark-red);
+            color: #ffffff;
+            padding: 15px 60px;
+            font-size: 20px;
+            font-family: 'Georgia', serif;
+            letter-spacing: 3px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            animation: fadeIn 2s ease-out 1.5s forwards;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .yeah-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(139, 0, 0, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .yeah-btn:hover {
+            background: var(--dark-red);
+            box-shadow: 0 0 30px rgba(139, 0, 0, 0.5);
+            transform: scale(1.05);
+        }
+
+        .yeah-btn:hover::before {
+            left: 100%;
+        }
+
+        .yeah-btn:active {
+            transform: scale(0.98);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Falling petals */
+        .falling-petals-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 5;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .falling-petal {
+            position: absolute;
+            width: 12px;
+            height: 16px;
+            background: linear-gradient(
+                135deg,
+                var(--dark-red-dark) 0%,
+                var(--dark-red) 50%,
+                var(--dark-red-light) 100%
+            );
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            box-shadow: 
+                0 0 4px rgba(139, 0, 0, 0.6),
+                0 0 8px rgba(139, 0, 0, 0.3);
+            opacity: 0.85;
+        }
+
+        /* iframe container */
+        .iframe-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 1s ease-in;
+            background: #000;
+        }
+
+        .iframe-container.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .iframe-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Audio element */
+        audio {
+            display: none;
+        }
+
+        /* Loading overlay with flower */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 99;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease;
+        }
+
+        .loading-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Loading flower */
+        .loading-flower {
+            position: relative;
+            width: 100px;
+            height: 100px;
+        }
+
+        .flower-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            background: radial-gradient(circle, var(--dark-red-dark) 0%, var(--dark-red) 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 15px rgba(139, 0, 0, 0.8);
+            z-index: 10;
+        }
+
+        .flower-petal {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 25px;
+            height: 35px;
+            background: linear-gradient(135deg, var(--dark-red-dark) 0%, var(--dark-red) 50%, var(--dark-red-light) 100%);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            transform-origin: center bottom;
+            opacity: 0;
+            box-shadow: 
+                inset -3px -3px 8px rgba(0, 0, 0, 0.3),
+                0 0 8px rgba(139, 0, 0, 0.4);
+        }
+
+        .flower-petal.visible {
+            opacity: 1;
+            animation: petalAppear 0.4s ease-out forwards;
+        }
+
+        @keyframes petalAppear {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -100%) rotate(var(--rotation)) scale(0.3);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -100%) rotate(var(--rotation)) scale(1);
+            }
+        }
+
+        .flower-petal:nth-child(1) { --rotation: 0deg; }
+        .flower-petal:nth-child(2) { --rotation: 45deg; }
+        .flower-petal:nth-child(3) { --rotation: 90deg; }
+        .flower-petal:nth-child(4) { --rotation: 135deg; }
+        .flower-petal:nth-child(5) { --rotation: 180deg; }
+        .flower-petal:nth-child(6) { --rotation: 225deg; }
+        .flower-petal:nth-child(7) { --rotation: 270deg; }
+        .flower-petal:nth-child(8) { --rotation: 315deg; }
+
+        .flower-petal:nth-child(1) { transform: translate(-50%, -100%) rotate(0deg); }
+        .flower-petal:nth-child(2) { transform: translate(-50%, -100%) rotate(45deg); }
+        .flower-petal:nth-child(3) { transform: translate(-50%, -100%) rotate(90deg); }
+        .flower-petal:nth-child(4) { transform: translate(-50%, -100%) rotate(135deg); }
+        .flower-petal:nth-child(5) { transform: translate(-50%, -100%) rotate(180deg); }
+        .flower-petal:nth-child(6) { transform: translate(-50%, -100%) rotate(225deg); }
+        .flower-petal:nth-child(7) { transform: translate(-50%, -100%) rotate(270deg); }
+        .flower-petal:nth-child(8) { transform: translate(-50%, -100%) rotate(315deg); }
+    </style>
+</head>
+<body>
+    <audio id="background-music" loop preload="auto">
+        <source src="assets/mp3/song.mp3" type="audio/mpeg">
+    </audio>
+    
+    <div class="falling-petals-container" id="fallingPetals"></div>
+
+    <div class="home-content" id="homeContent">
+        <p class="question">Are you doing okay, <span class="name">Karina</span>?</p>
+        <button class="yeah-btn" id="yeahBtn">Yeah</button>
+    </div>
+
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-flower">
+            <div class="flower-petal"></div>
+            <div class="flower-petal"></div>
+            <div class="flower-petal"></div>
+            <div class="flower-petal"></div>
+            <div class="flower-petal"></div>
+            <div class="flower-petal"></div>
+            <div class="flower-petal"></div>
+            <div class="flower-petal"></div>
+            <div class="flower-center"></div>
+        </div>
+    </div>
+
+    <div class="iframe-container" id="iframeContainer">
+        <iframe id="mainFrame" src="" allow="autoplay"></iframe>
+    </div>
+
+    <script>
+        // ===== PETAL SYSTEM =====
+        class PetalSystem {
+            constructor() {
+                this.container = document.querySelector('.falling-petals-container');
+                this.activePetals = [];
+                this.maxPetals = 15;
+                this.spawnRate = 3000;
+                this.running = true;
+                this.init();
+            }
+
+            init() {
+                for (let i = 0; i < 4; i++) {
+                    setTimeout(() => this.createPetal(), i * 400);
+                }
+
+                this.interval = setInterval(() => {
+                    if (this.running && this.activePetals.length < this.maxPetals) {
+                        this.createPetal();
+                    }
+                }, this.spawnRate);
+            }
+
+            stop() {
+                this.running = false;
+                clearInterval(this.interval);
+            }
+
+            createPetal() {
+                if (!this.running) return;
+                
+                const petal = document.createElement('div');
+                petal.className = 'falling-petal';
+                
+                const startX = Math.random() * window.innerWidth;
+                const startY = -30;
+                
+                const size = 0.7 + Math.random() * 0.5;
+                const fallSpeed = 0.3 + Math.random() * 0.4;
+                const horizontalDrift = -0.2 + Math.random() * 0.4;
+                const rotation = Math.random() * 360;
+                const rotationSpeed = -1 + Math.random() * 2;
+                const opacity = 0.7 + Math.random() * 0.3;
+                
+                petal.style.width = `${12 * size}px`;
+                petal.style.height = `${16 * size}px`;
+                petal.style.left = `${startX}px`;
+                petal.style.top = `${startY}px`;
+                petal.style.transform = `rotate(${rotation}deg)`;
+                petal.style.opacity = opacity;
+                
+                this.container.appendChild(petal);
+                
+                const state = {
+                    x: startX,
+                    y: startY,
+                    rotation: rotation,
+                    fallSpeed: fallSpeed,
+                    horizontalDrift: horizontalDrift,
+                    rotationSpeed: rotationSpeed,
+                    windPhase: Math.random() * Math.PI * 2,
+                    windAmplitude: 0.02 + Math.random() * 0.03
+                };
+                
+                this.activePetals.push({ element: petal, state });
+                this.animatePetal(petal, state);
+            }
+
+            animatePetal(petal, state) {
+                const animate = () => {
+                    if (!this.running) {
+                        petal.remove();
+                        return;
+                    }
+                    
+                    state.y += state.fallSpeed;
+                    
+                    state.windPhase += 0.015;
+                    const windEffect = Math.sin(state.windPhase) * state.windAmplitude;
+                    state.x += state.horizontalDrift + windEffect;
+                    
+                    state.rotation += state.rotationSpeed;
+                    
+                    petal.style.top = `${state.y}px`;
+                    petal.style.left = `${state.x}px`;
+                    petal.style.transform = `rotate(${state.rotation}deg)`;
+                    
+                    if (state.y > window.innerHeight + 50 || 
+                        state.x < -50 || 
+                        state.x > window.innerWidth + 50) {
+                        petal.remove();
+                        const index = this.activePetals.findIndex(p => p.element === petal);
+                        if (index > -1) {
+                            this.activePetals.splice(index, 1);
+                        }
+                        return;
+                    }
+                    
+                    requestAnimationFrame(() => animate());
+                };
+                
+                animate();
+            }
+        }
+
+        // ===== FLOWER LOADING ANIMATION =====
+        function animateFlowerLoading() {
+            const petals = document.querySelectorAll('.flower-petal');
+            let petalIndex = 0;
+            
+            const showNextPetal = () => {
+                if (petalIndex < petals.length) {
+                    petals[petalIndex].classList.add('visible');
+                    petalIndex++;
+                    setTimeout(showNextPetal, 200);
+                }
+            };
+            
+            showNextPetal();
+        }
+
+        // ===== MAIN LOGIC =====
+        document.addEventListener('DOMContentLoaded', () => {
+            const petalSystem = new PetalSystem();
+
+            const yeahBtn = document.getElementById('yeahBtn');
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const iframeContainer = document.getElementById('iframeContainer');
+            const mainFrame = document.getElementById('mainFrame');
+            const musicElement = document.getElementById('background-music');
+            const homeContent = document.getElementById('homeContent');
+            const fallingPetals = document.getElementById('fallingPetals');
+
+            // Preload audio
+            if (musicElement) {
+                musicElement.volume = 0.7;
+                musicElement.load();
+            }
+
+            yeahBtn.addEventListener('click', () => {
+                // Hide home content immediately
+                homeContent.classList.add('hidden');
+                
+                // Show loading overlay with flower
+                loadingOverlay.classList.add('active');
+                
+                // Start flower petal animation
+                animateFlowerLoading();
+                
+                // Start music after 2 seconds
+                setTimeout(() => {
+                    if (musicElement) {
+                        musicElement.play().catch(() => {});
+                    }
+                    
+                    // Load iframe
+                    mainFrame.src = 'page/index.html';
+                    
+                    // When iframe loads, show it and hide everything else
+                    mainFrame.onload = () => {
+                        // Stop home petals
+                        petalSystem.stop();
+                        fallingPetals.innerHTML = '';
+                        
+                        // Hide loading
+                        loadingOverlay.classList.remove('active');
+                        
+                        // Show iframe
+                        iframeContainer.classList.add('active');
+                    };
+                }, 2000);
+            });
+        });
+
+        // ===== SECURITY =====
+        document.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            return false;
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'F12' || e.keyCode === 123 ||
+                (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) ||
+                (e.ctrlKey && (e.key === 'U' || e.key === 'S' || e.key === 'P'))) {
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        document.addEventListener('selectstart', (e) => {
+            e.preventDefault();
+            return false;
+        });
+    </script>
+</body>
+</html>
