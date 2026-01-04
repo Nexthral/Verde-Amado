@@ -975,19 +975,117 @@ img {
     }
 }
 
+/* ========== OTIMIZAÇÕES DE PERFORMANCE ========== */
+.falling-petal,
+.petal,
+.grass-blade,
+.star {
+    will-change: transform, opacity;
+}
+
+/* ========== RESPONSIVIDADE ========== */
 @media (max-width: 768px) {
+    .bouquet-wrapper {
+        bottom: 200px;
+    }
+    
     .bouquet-container {
-        width: 400px;
-        height: 520px;
-        transform: scale(0.85);
+        width: 350px;
+        height: 450px;
+        transform: scale(0.75);
+    }
+    
+    .verse-text {
+        max-width: 260px;
+        bottom: 180px;
+    }
+    
+    .verse-main {
+        font-size: 16px;
+    }
+    
+    .verse-reference {
+        font-size: 12px;
+    }
+    
+    .grass-container {
+        height: 180px;
     }
 }
 
 @media (max-width: 480px) {
+    .bouquet-wrapper {
+        bottom: 160px;
+    }
+    
     .bouquet-container {
-        width: 350px;
-        height: 455px;
-        transform: scale(0.7);
+        width: 280px;
+        height: 360px;
+        transform: scale(0.55);
+    }
+    
+    .verse-text {
+        max-width: 220px;
+        bottom: 140px;
+        left: 4%;
+    }
+    
+    .verse-main {
+        font-size: 14px;
+        letter-spacing: 0.2px;
+        line-height: 1.5;
+    }
+    
+    .verse-reference {
+        font-size: 11px;
+    }
+    
+    .grass-container {
+        height: 140px;
+    }
+    
+    .stars-sky {
+        height: 20%;
+    }
+}
+
+@media (max-width: 380px) {
+    .bouquet-wrapper {
+        bottom: 140px;
+    }
+    
+    .bouquet-container {
+        width: 240px;
+        height: 310px;
+        transform: scale(0.45);
+    }
+    
+    .verse-text {
+        max-width: 200px;
+        bottom: 120px;
+    }
+    
+    .verse-main {
+        font-size: 13px;
+    }
+    
+    .verse-reference {
+        font-size: 10px;
+    }
+    
+    .grass-container {
+        height: 120px;
+    }
+}
+
+/* Reduzir animações em mobile para performance */
+@media (max-width: 768px) {
+    .grass-blade {
+        animation-duration: 20s !important;
+    }
+    
+    .star {
+        animation-duration: 20s !important;
     }
 }
 

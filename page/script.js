@@ -2,8 +2,10 @@ class PetalSystem {
     constructor() {
         this.container = document.querySelector('.falling-petals-container');
         this.activePetals = [];
-        this.maxPetals = 20;
-        this.spawnRate = 2500;
+        // Menos pétalas em mobile para performance
+        const isMobile = window.innerWidth <= 768;
+        this.maxPetals = isMobile ? 10 : 20;
+        this.spawnRate = isMobile ? 3500 : 2500;
         this.init();
     }
 
